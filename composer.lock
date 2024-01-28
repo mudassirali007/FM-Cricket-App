@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "684f25a2a80285200d1a8f3f0d7d7459",
+    "content-hash": "29859e5c7a6ed345772ee38708b167ed",
     "packages": [
         {
             "name": "brick/math",
@@ -571,6 +571,74 @@
                 }
             ],
             "time": "2023-10-12T05:21:21+00:00"
+        },
+        {
+            "name": "gearbox-solutions/eloquent-filemaker",
+            "version": "1.1.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/gearbox-solutions/eloquent-filemaker.git",
+                "reference": "15a9f31ccb2e94356aba69cb2f05f0874d48e78b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/gearbox-solutions/eloquent-filemaker/zipball/15a9f31ccb2e94356aba69cb2f05f0874d48e78b",
+                "reference": "15a9f31ccb2e94356aba69cb2f05f0874d48e78b",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "guzzlehttp/guzzle": "^7.5",
+                "illuminate/database": "^9.0|^10.0",
+                "php": ">=8.0"
+            },
+            "require-dev": {
+                "laravel/pint": "^1.1",
+                "mockery/mockery": "^1.5.1",
+                "orchestra/testbench": "^7.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "GearboxSolutions\\EloquentFileMaker\\Providers\\FileMakerConnectionServiceProvider"
+                    ],
+                    "aliases": {
+                        "FM": "GearboxSolutions\\EloquentFileMaker\\Support\\Facades\\FM"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Tests\\": "tests/",
+                    "GearboxSolutions\\EloquentFileMaker\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "David Nahodyl",
+                    "email": "david@gearboxgo.com"
+                }
+            ],
+            "description": "A package for getting FileMaker records as Eloquent models in Laravel",
+            "keywords": [
+                "FileMaker",
+                "Gearbox Solutions",
+                "data api",
+                "database",
+                "eloquent",
+                "laravel",
+                "models"
+            ],
+            "support": {
+                "issues": "https://github.com/gearbox-solutions/eloquent-filemaker/issues",
+                "source": "https://github.com/gearbox-solutions/eloquent-filemaker/tree/1.1.3"
+            },
+            "time": "2023-09-26T14:40:06+00:00"
         },
         {
             "name": "graham-campbell/result-type",
