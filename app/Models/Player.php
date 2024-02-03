@@ -11,7 +11,7 @@ class Player extends FMModel
 {
     use HasFactory;
 
-    protected $connection = 'filemaker';
+//    protected $connection = 'filemaker';
 
     protected $layout = 'Form';
 

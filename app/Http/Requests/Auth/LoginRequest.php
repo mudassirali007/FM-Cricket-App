@@ -4,10 +4,13 @@ namespace App\Http\Requests\Auth;
 
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+
 
 class LoginRequest extends FormRequest
 {
@@ -27,7 +30,7 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => ['required', 'string', 'email'],
+            'username' => ['required', 'string'],
             'password' => ['required', 'string'],
         ];
     }
@@ -39,15 +42,38 @@ class LoginRequest extends FormRequest
      */
     public function authenticate(): void
     {
+        $config = config('database.connections.filemaker');
+
+        $url = ($config['protocol'] ?? 'https') . '://' . $config['host'] . '/fmi/data/' . ($config['version'] ?? 'vLatest') . '/databases/' . $config['database'] . '/sessions';
+        $postBody = [
+            'fmDataSource' => [
+                [
+                    'database' => $config['database'],
+                    'username' => $this->username,
+                    'password' => $this->password,
+                ]
+            ],
+        ];
+
+        $response = Http::withBasicAuth($this->username, $this->password)
+            ->post($url, $postBody);
+
+        $token = Arr::get($response, 'response.token');
         $this->ensureIsNotRateLimited();
 
-        if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
+//        if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
+        if (! $token) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
-                'email' => trans('auth.failed'),
+                'username' => trans('auth.failed'),
             ]);
         }
+        $this->session()->put([
+            'username'=> $this->username,
+            'password'=> $this->password,
+            'filemaker_token'=> $token,
+        ]);
 
         RateLimiter::clear($this->throttleKey());
     }
@@ -68,7 +94,7 @@ class LoginRequest extends FormRequest
         $seconds = RateLimiter::availableIn($this->throttleKey());
 
         throw ValidationException::withMessages([
-            'email' => trans('auth.throttle', [
+            'username' => trans('auth.throttle', [
                 'seconds' => $seconds,
                 'minutes' => ceil($seconds / 60),
             ]),
@@ -80,6 +106,6 @@ class LoginRequest extends FormRequest
      */
     public function throttleKey(): string
     {
-        return Str::transliterate(Str::lower($this->input('email')).'|'.$this->ip());
+        return Str::transliterate(Str::lower($this->input('username')).'|'.$this->ip());
     }
 }
