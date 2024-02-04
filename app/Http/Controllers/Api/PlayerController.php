@@ -8,8 +8,10 @@ use App\Models\Player;
 use Inertia\Inertia;
 use Inertia\Response;
 
+
 class PlayerController extends Controller
 {
+
     /**
      * Display a listing of the resource.
      */

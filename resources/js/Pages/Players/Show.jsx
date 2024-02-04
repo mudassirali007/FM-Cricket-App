@@ -3,9 +3,10 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
 
 export default function Show({ auth, player }) {
+    console.log(player)
     return (
         <AuthenticatedLayout
-            user={auth.user}
+            username={auth.username}
             header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Player Details</h2>}
         >
             <Head title="Player Details" />
@@ -16,7 +17,7 @@ export default function Show({ auth, player }) {
                         <div className="p-6 bg-white border-b border-gray-200">
                             <div className="flex flex-col items-center">
                                 <img
-                                    src={player.image || 'path/to/default/image.jpg'}
+                                    src={ player.image_base64 ? player.image_base64 : '/images/no-image-placeholder.webp' }
                                     alt="Player"
                                     className="w-32 h-32 rounded-full mb-4"
                                 />

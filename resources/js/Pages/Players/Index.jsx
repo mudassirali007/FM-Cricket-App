@@ -8,7 +8,7 @@ export default function Players({ auth, players }) {
     console.log(players)
     return (
         <AuthenticatedLayout
-            user={auth.user}
+            username={auth.username}
             header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Players</h2>}
         >
             <Head title="Players" />
@@ -20,6 +20,9 @@ export default function Players({ auth, players }) {
                             <table className="min-w-full table-auto">
                                 <thead className="bg-gray-100">
                                 <tr>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Image
+                                    </th>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Name
                                     </th>
@@ -40,6 +43,9 @@ export default function Players({ auth, players }) {
                                 <tbody className="bg-white divide-y divide-gray-200">
                                 {players.map((player, index) => (
                                     <tr key={index}>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <img src={ player.image_base64 ? player.image_base64 : '/images/no-image-placeholder.webp' } alt="Player" className="h-10 w-10 rounded-full"/>
+                                        </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                                             {player.name}
                                         </td>
