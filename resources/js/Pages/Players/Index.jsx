@@ -44,7 +44,8 @@ export default function Players({ auth, players }) {
                                 {players.map((player, index) => (
                                     <tr key={index}>
                                         <td className="px-6 py-4 whitespace-nowrap">
-                                            <img src={ player.image_base64 ? player.image_base64 : '/images/no-image-placeholder.webp' } alt="Player" className="h-10 w-10 rounded-full"/>
+                                             <img src={ player.image ? `/players/image-proxy?url=${player.image}` : '/images/no-image-placeholder.webp' } alt="Player" className="h-10 w-10 rounded-full"/>
+                                            {/*<img src={ player.image_base64 ? player.image_base64 : '/images/no-image-placeholder.webp' } alt="Player" className="h-10 w-10 rounded-full"/>*/}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                                             {player.name}
