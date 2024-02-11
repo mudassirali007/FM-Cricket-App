@@ -5,15 +5,19 @@ import NavLink from "@/Components/NavLink.jsx";
 
 
 export default function Players({ auth, players }) {
-    console.log(players)
+
     return (
         <AuthenticatedLayout
             username={auth.username}
-            header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Players</h2>}
+            header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Players List</h2>}
         >
-            <Head title="Players" />
-
-            <div className="py-12">
+            <Head title="Players List" />
+            <div className="">
+                <div className={`flex justify-end lg:px-8 max-w-7xl mx-auto sm:px-6`}>
+                    <button type="button" className="m-2 bg-white inline-flex items-center px-4 py-2 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest focus:outline-none focus:border-gray-900 focus:ring ring-gray-300 disabled:opacity-25 transition ease-in-out duration-150">
+                        <NavLink href={route('players.create')}>Create</NavLink>
+                    </button>
+                </div>
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                         <div className="p-6">
@@ -44,7 +48,7 @@ export default function Players({ auth, players }) {
                                 {players.map((player, index) => (
                                     <tr key={index}>
                                         <td className="px-6 py-4 whitespace-nowrap">
-                                             <img src={ player.image ? `/players/image-proxy?url=${player.image}` : '/images/no-image-placeholder.webp' } alt="Player" className="h-10 w-10 rounded-full"/>
+                                             <img src={ player.image ? `/proxy?url=${player.image}` : '/images/no-image-placeholder.webp' } alt="Player" className="h-10 w-10 rounded-full"/>
                                             {/*<img src={ player.image_base64 ? player.image_base64 : '/images/no-image-placeholder.webp' } alt="Player" className="h-10 w-10 rounded-full"/>*/}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
@@ -60,7 +64,7 @@ export default function Players({ auth, players }) {
                                             {player.age}
                                         </td>
                                         <td>
-                                            <button className="px-4 py-2 bg-indigo-50 text-white rounded hover:bg-indigo-700">
+                                            <button className="px-4 py-2 bg-indigo-50 text-white rounded ">
                                                 <NavLink href={route('players.show', player.id)}>View</NavLink>
                                             </button>
                                         </td>
