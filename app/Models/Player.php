@@ -14,8 +14,8 @@ class Player extends FMModel
 //    protected $connection = 'filemaker';
 
     protected $layout = 'Form';
-   
-    protected $fillable = ['name','age','contact','team_name','image'];
+
+    protected $fillable = ['name','age','contact','team_name','image','document'];
 
     protected $fieldMapping = [
         'PrimaryKey' => 'id',
@@ -24,6 +24,7 @@ class Player extends FMModel
         'Contact' => 'contact',
         'Teams::Name' => 'team_name',
         'Image' => 'image',
+        'Document' => 'document',
         'Team ForeignKey' => 'team_id',
     ];
 

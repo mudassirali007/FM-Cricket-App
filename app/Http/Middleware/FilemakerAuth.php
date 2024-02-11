@@ -34,6 +34,8 @@ class FilemakerAuth
             'database.connections.filemaker.password' => $password
         ]);
         // If age is 18 or above, proceed with the request
-        return $next($request);
+        return $next($request)->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
+            ->header('Pragma', 'no-cache')
+            ->header('Expires', 'Sat, 01 Jan 1990 00:00:00 GMT');
     }
 }

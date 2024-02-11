@@ -1,6 +1,6 @@
 import React from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head } from '@inertiajs/react';
+import { Head, router  } from '@inertiajs/react';
 import NavLink from "@/Components/NavLink.jsx";
 
 
@@ -52,16 +52,16 @@ export default function Players({ auth, players }) {
                                             {/*<img src={ player.image_base64 ? player.image_base64 : '/images/no-image-placeholder.webp' } alt="Player" className="h-10 w-10 rounded-full"/>*/}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                            {player.name}
+                                            {player?.name ? player?.name : 'N/A' }
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                            {player.contact}
+                                            {player?.contact ? player?.contact : 'N/A' }
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                            {player.team_name}
+                                            {player?.team_name ? player?.team_name : 'N/A' }
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                            {player.age}
+                                            {player?.age ? player?.age : 'N/A' }
                                         </td>
                                         <td>
                                             <button className="px-4 py-2 bg-indigo-50 text-white rounded ">

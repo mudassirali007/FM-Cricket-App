@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\PlayerRequest;
 use Illuminate\Http\Request;
 use App\Models\Player;
 use Illuminate\Http\File;
@@ -19,6 +20,7 @@ class PlayerController extends Controller
     public function index(Request $request): Response
     {
 //        $request->session()->forget(['fm_image_cookie']);
+//        dd($request->session()->all());
         $players = Player::all();
         return Inertia::render('Players/Index', ['players' => $players]);
     }
@@ -31,24 +33,11 @@ class PlayerController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(PlayerRequest $request)
     {
-        $validatedData = $request->validate([
-            'name' => 'string|max:255|nullable',
-            'age' => 'integer|nullable',
-            'contact' => 'string|max:255|nullable',
-            'team_name' => 'string|max:255|nullable',
-            'image' => 'nullable|image|max:2048', // Validate the image
-        ]);
+        $validatedData = $this->getValidatedData($request);
 
-        unset($validatedData['image']);
-        if ($request->hasFile('image')) {
-            // Assign the base64 string to the 'photo' field (or whichever field you use in FileMaker)
-            $validatedData['image'] = $request->file('image');
-        }
-        dd($validatedData);
-
-        $player = Player::create($validatedData);
+        Player::create($validatedData);
 
         return redirect()->route('players.index');
     }
@@ -64,21 +53,10 @@ class PlayerController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Player $player)
+    public function update(PlayerRequest $request, Player $player)
     {
-        $validatedData = $request->validate([
-            'name' => 'string|max:255|nullable',
-            'age' => 'integer|nullable',
-            'contact' => 'string|max:255|nullable',
-            'team_name' => 'string|max:255|nullable',
-            'image' => 'nullable|image|max:2048', // Validate the image
-        ]);
+        $validatedData = $this->getValidatedData($request);
 
-        unset($validatedData['image']);
-        if ($request->hasFile('image')) {
-            // Assign the base64 string to the 'photo' field (or whichever field you use in FileMaker)
-            $validatedData['image'] = $request->file('image');
-        }
         // Update player with validated data
         $player->update($validatedData);
 
@@ -88,8 +66,34 @@ class PlayerController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Player $player)
     {
-        //
+        $player->delete();
+
+        return redirect()->route('players.index')->with('success', 'Player deleted successfully');
+    }
+
+    /**
+     * @param PlayerRequest $request
+     * @return mixed
+     */
+    public function getValidatedData(PlayerRequest $request): mixed
+    {
+        $validatedData = $request->validated();
+
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $validatedData['image'] = [$image, $image->getClientOriginalName()];
+        } else {
+            unset($validatedData['image']);
+        }
+
+        if ($request->hasFile('document')) {
+            $document = $request->file('document');
+            $validatedData['document'] = [$document, $document->getClientOriginalName()];
+        } else {
+            unset($validatedData['document']);
+        }
+        return $validatedData;
     }
 }

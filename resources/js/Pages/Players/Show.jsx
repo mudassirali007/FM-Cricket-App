@@ -4,10 +4,10 @@ import { Head, useForm } from '@inertiajs/react';
 import NavLink from "@/Components/NavLink.jsx";
 
 export default function Show({ auth, player = {} }) {
-
+    console.log(player)
     const isEditing = player?.id || null;
 
-    const { data, setData, post, errors } = useForm({
+    const { data, setData, post, delete: destroy, errors } = useForm({
         name: player?.name || '',
         age: player?.age || '',
         contact: player?.contact || '',
@@ -18,9 +18,12 @@ export default function Show({ auth, player = {} }) {
     // Local state for image preview
     const [imagePreview, setImagePreview] = useState(player?.image ? `/proxy?url=${player.image}` : '/images/no-image-placeholder.webp');
 
-    // Adjusted handleSubmit remains the same...
-
-
+    // Handler for the delete operation
+    const handleDelete = () => {
+        if (confirm('Are you sure you want to delete this player?')) {
+            destroy(route('players.destroy', player.id));
+        }
+    };
     const handleImageChange = (e) => {
         const file = e.target.files[0];
         if (file) {
@@ -28,11 +31,28 @@ export default function Show({ auth, player = {} }) {
             setImagePreview(URL.createObjectURL(file)); // Create a preview URL
         }
     };
+    const uploadDocument = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setData('document', file); // Update the form data with the new image file
+        }
+    };
+
+    const downloadDocument = () => {
+        // Assuming player.document contains the URL to the document
+        const documentUrl = player?.document ? `/proxy?url=${player.document}` : null;
+        if(!documentUrl) return
+        const link = document.createElement('a');
+        link.href = documentUrl;
+        link.setAttribute('download', player?.id ? player?.id : 'player_document'); // Or provide a filename: link.setAttribute('download', 'filename.ext');
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
         const url = isEditing ? route('players.update', player.id) : route('players.store');
-        console.log(url,data,post)
         post(url, {
             forceFormData: true,
         });
@@ -47,14 +67,14 @@ export default function Show({ auth, player = {} }) {
 
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="py-6">
-                    {isEditing ?
+                    {isEditing &&
                     <>
                         <div className={`flex justify-end max-w-4xl mx-auto sm:px-6 lg:px-8`}>
                             <button type="button" className="m-2 bg-white inline-flex items-center px-4 py-2 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest focus:outline-none focus:border-gray-900 focus:ring ring-gray-300 disabled:opacity-25 transition ease-in-out duration-150">
                                 <NavLink href={route('players.create')}>Create</NavLink>
                             </button>
                         </div>
-                    </> : ``
+                    </>
                     }
                     <div className="max-w-4xl mx-auto sm:px-6 lg:px-8">
                         <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
@@ -70,6 +90,7 @@ export default function Show({ auth, player = {} }) {
                                                 value={data.name}
                                                 onChange={(e) => setData('name', e.target.value)}
                                                 className="mt-1 block w-full"
+                                                placeholder="Enter Player Name"
                                             />
                                         </div>
                                         <div>
@@ -81,6 +102,7 @@ export default function Show({ auth, player = {} }) {
                                                 value={data.age}
                                                 onChange={(e) => setData('age', e.target.value)}
                                                 className="mt-1 block w-full"
+                                                placeholder="Enter Player Age"
                                             />
                                         </div>
                                         <div>
@@ -92,6 +114,7 @@ export default function Show({ auth, player = {} }) {
                                                 value={data.contact}
                                                 onChange={(e) => setData('contact', e.target.value)}
                                                 className="mt-1 block w-full"
+                                                placeholder="Mobile Number"
                                             />
                                         </div>
                                         <div>
@@ -107,6 +130,29 @@ export default function Show({ auth, player = {} }) {
                                                 disabled
                                             />
                                         </div>
+                                        <div>
+                                            <label htmlFor="document" className="block text-sm font-medium text-gray-700">Document</label>
+                                            <input
+                                                id="document"
+                                                name="document"
+                                                type="file"
+                                                accept=".pdf,.doc,.docx" // Specify accepted file types
+                                                onChange={uploadDocument}
+                                                className="block w-1/2 px-3 py-2 text-sm text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm cursor-pointer focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                                            />
+                                        </div>
+                                        {player?.document ?
+                                            <div className={`py-2`}>
+                                                <button
+                                                    onClick={downloadDocument}
+                                                    type="button"
+                                                    className="px-4 py-2 text-sm font-medium text-white bg-blue-500 rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                                                >
+                                                    Download Document
+                                                </button>
+                                            </div>
+                                            : ``
+                                        }
                                         <div className={`py-2`}>
                                             <button type="submit" className="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:ring ring-gray-300 disabled:opacity-25 transition ease-in-out duration-150">
                                                 {isEditing ? `Update` : `Save`}
@@ -114,6 +160,14 @@ export default function Show({ auth, player = {} }) {
                                             <button type="button" className="mx-6 inline-flex items-center px-4 py-2 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest focus:outline-none focus:border-gray-900 focus:ring ring-gray-300 disabled:opacity-25 transition ease-in-out duration-150">
                                                 <NavLink className={`no-underline`} href={route('players.index')}>Back</NavLink>
                                             </button>
+
+                                            {isEditing &&
+                                            <>
+                                                <button type="button" onClick={handleDelete} className="inline-flex items-center px-4 py-2 bg-red-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-700 active:bg-red-900 focus:outline-none focus:border-gray-900 focus:ring ring-gray-300 disabled:opacity-25 transition ease-in-out duration-150">
+                                                    Delete
+                                                </button>
+                                            </>
+                                            }
                                         </div>
                                     </div>
                                     <div className="flex-1 flex-col inline-flex items-center justify-center">
